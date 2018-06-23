@@ -577,6 +577,20 @@ securityDefinitions:
     name: "api_key"
     in: "header"
 definitions:
+  QuestionArsenal:
+    type: "object"
+    required:
+      - "question_arsenal_id"
+      - "room_id"
+    properties:
+      question_arsenal_id:
+        type: "integer"
+        format: "int64"
+      room_id:
+        type: "integer"
+        format: "int64"
+    xml:
+      name: "QuestionArsenal"
   Question:
     type: "object"
     required:
@@ -592,6 +606,9 @@ definitions:
       author: # User.email
         type: "string"
       timer:
+        type: "integer"
+        format: "int64"
+      question_arsenal_id:
         type: "integer"
         format: "int64"
     xml:
@@ -679,7 +696,7 @@ definitions:
         type: "string"
     xml:
       name: "User"
-  Group:
+  Room:
     type: "object"
     required:
       - "name"
@@ -692,15 +709,15 @@ definitions:
         type: "string"
         format: "int64"
     xml:
-      name: "Group"
+      name: "Room"
   Score:
     type: "object"
     required:
-    - "group_id"
+    - "question_id"
     - "email"
     - "votes"
     properties:
-      group_id:
+      question_id:
         type: "integer"
         format: "int64"
       email:
