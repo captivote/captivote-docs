@@ -1,40 +1,45 @@
 swagger: "2.0"
 info:
-  description: "This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters."
+  description: "Cool server for Captivote/JudeBox/Guiltbox. Using REST API. Written on Swagger"
   version: "1.0.0"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
-  contact:
-    email: "apiteam@swagger.io"
+  title: "Captivote"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
-basePath: "/v2"
+host: "captivote.complicated.io"
+basePath: "/api"
 tags:
-- name: "pet"
-  description: "Everything about your Pets"
+- name: "question_arsenal"
+  description: "Everything about your QuestionArsenal"
   externalDocs:
     description: "Find out more"
     url: "http://swagger.io"
-- name: "store"
-  description: "Access to Petstore orders"
+- name: "question"
+  description: "Operations about questions"
+- name: "answer"
+  description: "Operations about answer"
+- name: "vote"
+  description: "Access to vote"
+- name: "votee"
+  description: "Access to votee"
 - name: "user"
-  description: "Operations about user"
+  description: "Access to user"
+- name: "room"
+  description: "Access to room"
+- name: "score"
+  description: "Access to score"
   externalDocs:
-    description: "Find out more about our store"
-    url: "http://swagger.io"
 schemes:
 - "https"
 - "http"
 paths:
-  /pet:
+  /question_arsenal:
     post:
       tags:
-      - "pet"
-      summary: "Add a new pet to the store"
+      - "question_arsenal"
+      summary: "Create a question arsenal"
       description: ""
-      operationId: "addPet"
+      operationId: "addQuestionArsenal"
       consumes:
       - "application/json"
       - "application/xml"
@@ -44,10 +49,10 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Pet object that needs to be added to the store"
+        description: "QuestionArsenal object that needs to be created"
         required: true
         schema:
-          $ref: "#/definitions/Pet"
+          $ref: "#/definitions/QuestionArsenal"
       responses:
         405:
           description: "Invalid input"
@@ -55,12 +60,41 @@ paths:
       - petstore_auth:
         - "write:pets"
         - "read:pets"
-    put:
+  /question_arsenal/{questionArsenalId}:
+    get:
       tags:
-      - "pet"
-      summary: "Update an existing pet"
+      - "question_arsenal"
+      summary: "Find QuestionArsenal by ID"
+      description: "Returns a single QuestionArsenal"
+      operationId: "getQuestionArsenalById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "questionArsenalId"
+        in: "path"
+        description: "ID of questionArsenalId to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/QuestionArsenal"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "QuestionArsenal not found"
+      security:
+      - api_key: []
+  /question:
+    post:
+      tags:
+      - "question"
+      summary: "Create a question"
       description: ""
-      operationId: "updatePet"
+      operationId: "addQuestion"
       consumes:
       - "application/json"
       - "application/xml"
@@ -70,147 +104,10 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Pet object that needs to be added to the store"
+        description: "Question object that needs to be created"
         required: true
         schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-        405:
-          description: "Validation exception"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByStatus:
-    get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by status"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "findPetsByStatus"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "status"
-        in: "query"
-        description: "Status values that need to be considered for filter"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "available"
-          - "pending"
-          - "sold"
-          default: "available"
-        collectionFormat: "multi"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid status value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByTags:
-    get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by tags"
-      description: "Muliple tags can be provided with comma separated strings. Use         tag1, tag2, tag3 for testing."
-      operationId: "findPetsByTags"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "tags"
-        in: "query"
-        description: "Tags to filter by"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-        collectionFormat: "multi"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid tag value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-      deprecated: true
-  /pet/{petId}:
-    get:
-      tags:
-      - "pet"
-      summary: "Find pet by ID"
-      description: "Returns a single pet"
-      operationId: "getPetById"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to return"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - api_key: []
-    post:
-      tags:
-      - "pet"
-      summary: "Updates a pet in the store with form data"
-      description: ""
-      operationId: "updatePetWithForm"
-      consumes:
-      - "application/x-www-form-urlencoded"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet that needs to be updated"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "name"
-        in: "formData"
-        description: "Updated name of the pet"
-        required: false
-        type: "string"
-      - name: "status"
-        in: "formData"
-        description: "Updated status of the pet"
-        required: false
-        type: "string"
+          $ref: "#/definitions/Question"
       responses:
         405:
           description: "Invalid input"
@@ -218,173 +115,206 @@ paths:
       - petstore_auth:
         - "write:pets"
         - "read:pets"
-    delete:
+  /question/{questionId}:
+    get:
       tags:
-      - "pet"
-      summary: "Deletes a pet"
-      description: ""
-      operationId: "deletePet"
+      - "question"
+      summary: "Find question by ID"
+      description: "Returns a single Question"
+      operationId: "getQuestionById"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "api_key"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "petId"
+      - name: "questionId"
         in: "path"
-        description: "Pet id to delete"
+        description: "ID of question to return"
         required: true
         type: "integer"
         format: "int64"
       responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Question"
         400:
           description: "Invalid ID supplied"
         404:
-          description: "Pet not found"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/{petId}/uploadImage:
-    post:
-      tags:
-      - "pet"
-      summary: "uploads an image"
-      description: ""
-      operationId: "uploadFile"
-      consumes:
-      - "multipart/form-data"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to update"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "additionalMetadata"
-        in: "formData"
-        description: "Additional data to pass to server"
-        required: false
-        type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ApiResponse"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /store/inventory:
-    get:
-      tags:
-      - "store"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
+          description: "Question not found"
       security:
       - api_key: []
-  /store/order:
+  /answer:
     post:
       tags:
-      - "store"
-      summary: "Place an order for a pet"
+      - "answer"
+      summary: "Create an answer"
       description: ""
-      operationId: "placeOrder"
+      operationId: "addAnswer"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "order placed for purchasing the pet"
+        description: "Answer object that needs to be created"
         required: true
         schema:
-          $ref: "#/definitions/Order"
+          $ref: "#/definitions/Answer"
       responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid Order"
-  /store/order/{orderId}:
+        405:
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /answer/{answerId}:
     get:
       tags:
-      - "store"
-      summary: "Find purchase order by ID"
-      description: "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
-      operationId: "getOrderById"
+      - "answer"
+      summary: "Find answer by ID"
+      description: "Returns a single answer"
+      operationId: "getAnswerById"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "orderId"
+      - name: "answerId"
         in: "path"
-        description: "ID of pet that needs to be fetched"
+        description: "ID of answer to return"
         required: true
         type: "integer"
-        maximum: 10.0
-        minimum: 1.0
         format: "int64"
       responses:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Order"
+            $ref: "#/definitions/Answer"
         400:
           description: "Invalid ID supplied"
         404:
-          description: "Order not found"
-    delete:
+          description: "Answer not found"
+      security:
+      - api_key: []
+  /vote:
+    post:
       tags:
-      - "store"
-      summary: "Delete purchase order by ID"
-      description: "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors"
-      operationId: "deleteOrder"
+      - "vote"
+      summary: "Create a vote"
+      description: ""
+      operationId: "addVote"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "orderId"
+      - in: "body"
+        name: "body"
+        description: "vote object that needs to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Vote"
+      responses:
+        405:
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /vote/{voteId}:
+    get:
+      tags:
+      - "vote"
+      summary: "Find Vote by ID"
+      description: "Returns a single Vote"
+      operationId: "getVoteById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "voteId"
         in: "path"
-        description: "ID of the order that needs to be deleted"
+        description: "ID of vote to return"
         required: true
         type: "integer"
-        minimum: 1.0
         format: "int64"
       responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Vote"
         400:
           description: "Invalid ID supplied"
         404:
-          description: "Order not found"
+          description: "Vote not found"
+      security:
+      - api_key: []
+  /votee:
+    post:
+      tags:
+      - "votee"
+      summary: "Create a votee"
+      description: ""
+      operationId: "addVotee"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "votee object that needs to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Votee"
+      responses:
+        405:
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /votee/{voteeId}:
+    get:
+      tags:
+      - "votee"
+      summary: "Find votee by ID"
+      description: "Returns a single Votee"
+      operationId: "getVoteeById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "voteeId"
+        in: "path"
+        description: "ID of votee to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Votee"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Votee not found"
+      security:
+      - api_key: []
   /user:
     post:
       tags:
       - "user"
       summary: "Create user"
       description: "This can only be done by the logged in user."
-      operationId: "createUser"
+      operationId: "addUser"
       produces:
       - "application/xml"
       - "application/json"
@@ -398,172 +328,192 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/createWithArray:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithArrayInput"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/createWithList:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithListInput"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/login:
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /user/{userId}:
     get:
       tags:
       - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
+      summary: "Find user by ID"
+      description: "Returns a single user"
+      operationId: "getUserById"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-        400:
-          description: "Invalid username/password supplied"
-  /user/logout:
-    get:
-      tags:
-      - "user"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters: []
-      responses:
-        default:
-          description: "successful operation"
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: "Get user by user name"
-      description: ""
-      operationId: "getUserByName"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "username"
+      - name: "userId"
         in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
+        description: "ID of user to return"
         required: true
-        type: "string"
+        type: "integer"
+        format: "int64"
       responses:
         200:
           description: "successful operation"
           schema:
             $ref: "#/definitions/User"
-        400:
-          description: "Invalid username supplied"
         404:
-          description: "User not found"
+          description: "user not found"
+      security:
+      - api_key: []
     put:
       tags:
       - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
+      summary: "Update user by ID"
+      description: "Returns a single user"
+      operationId: "putUserById"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "username"
+      - name: "userId"
         in: "path"
-        description: "name that need to be updated"
+        description: "ID of user to return"
         required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
+        type: "integer"
+        format: "int64"
       responses:
-        400:
-          description: "Invalid user supplied"
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        204:
+          description: "No Content"
         404:
           description: "User not found"
-    delete:
+      security:
+      - api_key: []
+  /users:
+    get:
       tags:
       - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
+      summary: "Find all users"
+      description: "Returns all user"
+      operationId: "getAllUsers"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: "User not found"
+      security:
+      - api_key: []
+  /room:
+    post:
+      tags:
+      - "room"
+      summary: "Create a room"
+      description: ""
+      operationId: "addRoom"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be deleted"
+      - in: "body"
+        name: "body"
+        description: "Room object that needs to be created"
         required: true
-        type: "string"
+        schema:
+          $ref: "#/definitions/Room"
       responses:
+        405:
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /room/{roomId}:
+    get:
+      tags:
+      - "room"
+      summary: "Find room by ID"
+      description: "Returns a single room"
+      operationId: "getRoomById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "roomId"
+        in: "path"
+        description: "ID of room to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Room"
         400:
-          description: "Invalid username supplied"
+          description: "Invalid ID supplied"
         404:
-          description: "User not found"
+          description: "room not found"
+      security:
+      - api_key: []
+  /score:
+    post:
+      tags:
+      - "score"
+      summary: "Create a score"
+      description: ""
+      operationId: "addScore"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Score object that needs to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/Score"
+      responses:
+        405:
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /score/{scoreId}:
+    get:
+      tags:
+      - "score"
+      summary: "Find score by ID"
+      description: "Returns a single score"
+      operationId: "getScoreById"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "scoreId"
+        in: "path"
+        description: "ID of score to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Score"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "score not found"
+      security:
+      - api_key: []
 securityDefinitions:
   petstore_auth:
     type: "oauth2"
@@ -603,8 +553,9 @@ definitions:
         format: "int64"
       content:
         type: "string"
-      author: # User.email
+      author:
         type: "string"
+        example: "user email"
       timer:
         type: "integer"
         format: "int64"
@@ -679,6 +630,7 @@ definitions:
       parent:
         type: "integer"
         format: "int64"
+        example: "vote_id"
     xml:
       name: "Votee"
   User:
@@ -692,6 +644,12 @@ definitions:
         type: "string"
       password:
         type: "string"
+      title:
+        type: "string"
+      roles:
+        type: "array"
+        items:
+          type: "string"
       alias:
         type: "string"
     xml:
@@ -700,14 +658,17 @@ definitions:
     type: "object"
     required:
       - "name"
+      - "owner"
     properties:
       name:
         type: "string"
       description:
         type: "string"
       user_limit:
-        type: "string"
+        type: "integer"
         format: "int64"
+      owner:
+        type: "string"
     xml:
       name: "Room"
   Score:
@@ -726,17 +687,7 @@ definitions:
         type: "integer"
         format: "int64"
     xml:
-      name: "Pet"
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
+      name: "Score"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
